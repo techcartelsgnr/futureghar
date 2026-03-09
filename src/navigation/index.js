@@ -1,0 +1,11 @@
+export { default as LoginScreen } from '../screens/auth/LoginScreen';
+export { default as RegisterScreen } from '../screens/auth/RegisterScreen';
+export { default as OtpScreen } from '../screens/auth/OtpScreen';
+export { default as ForgotScreen } from '../screens/auth/ForgotScreen';
+export { default as ResetScreen } from '../screens/auth/ResetScreen';
+export { default as HomeScreen } from '../screens/home/HomeScreen';
+export { default as ProfileScreen } from '../screens/common/ProfileScreen';
+export { default as NotificationScreen } from '../screens/common/NotificationScreen';
+export { default as PropertyList } from '../screens/property/PropertyList';
+export { default as PropertyDetails } from '../screens/property/PropertyDetails';
+export { default as AddPropertyScreen } from '../screens/property/AddPropertyScreen';

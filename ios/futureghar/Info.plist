@@ -34,7 +34,7 @@
 		<true/>
 	</dict>
 	<key>NSLocationWhenInUseUsageDescription</key>
-	<string></string>
+	<string/>
 	<key>RCTNewArchEnabled</key>
 	<true/>
 	<key>UILaunchStoryboardName</key>
@@ -56,5 +56,21 @@
 	</array>
 	<key>UIViewControllerBasedStatusBarAppearance</key>
 	<false/>
+	<key>UIAppFonts</key>
+	<array>
+		<string>Quicksand-Bold.ttf</string>
+		<string>AzeretMono-Regular.ttf</string>
+		<string>InterTight-Bold.ttf</string>
+		<string>AzeretMono-Thin.ttf</string>
+		<string>AzeretMono-Medium.ttf</string>
+		<string>Quicksand-Medium.ttf</string>
+		<string>InterTight-Medium.ttf</string>
+		<string>AzeretMono-MediumItalic.ttf</string>
+		<string>AzeretMono-Bold.ttf</string>
+		<string>InterTight-Regular.ttf</string>
+		<string>Quicksand-Regular.ttf</string>
+		<string>Quicksand-VariableFont_wght.ttf</string>
+		<string>NotoColorEmoji-Regular.ttf</string>
+	</array>
 </dict>
 </plist>
