@@ -22,7 +22,7 @@ const ButtonWithLoader = ({
 }) => {
   const { colors } = useTheme();
 
-  const buttonBg = bgColor || colors.primary;
+  const buttonBg = bgColor || colors.primaryDark;
   const buttonText = textColor || '#ffffff';
 
   return (

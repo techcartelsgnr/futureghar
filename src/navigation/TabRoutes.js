@@ -4,10 +4,12 @@ import { COLORS, DeviceSize } from '../theme/theme';
 import CustomBottomTabBar from '../components/CustomBottomTabBar';
 
 import {
-  AddPropertyScreen,
   HomeScreen,
+  MapViewScreen,
+  MyProperties,
   ProfileScreen,
-  PropertyDetails,
+  SearchProperty,
+  SellerDashboard,
 } from './index';
 
 const Tab = createBottomTabNavigator();
@@ -34,21 +36,61 @@ export default function TabRoutes() {
           ),
         }}
       />
+      
       <Tab.Screen
-        name="AddPropertyScreen"
-        component={AddPropertyScreen}
+        name="SearchProperty"
+        component={SearchProperty}
         options={{
-          tabBarLabel: 'Add Property',
+          tabBarLabel: 'Search',
           tabBarIcon: ({ color }) => (
             <Image
-              source={require('../../assets/tab/home.png')}
+              source={require('../../assets/tab/search.png')}
+              style={[styles.icon, { tintColor: color }]}
+            />
+          ),
+        }}
+      />
+       <Tab.Screen
+        name="MyProperties"
+        component={MyProperties}
+        options={{
+          tabBarLabel: 'My Properties',
+          tabBarIcon: ({ color }) => (
+            <Image
+              source={require('../../assets/tab/myproperty.png')}
               style={[styles.icon, { tintColor: color }]}
             />
           ),
         }}
       />
 
-      
+      {/* <Tab.Screen
+        name="MapViewScreen"
+        component={MapViewScreen}
+        options={{
+          tabBarLabel: 'MapView',
+          tabBarIcon: ({ color }) => (
+            <Image
+              source={require('../../assets/tab/myproperty.png')}
+              style={[styles.icon, { tintColor: color }]}
+            />
+          ),
+        }}
+      /> */}
+
+       <Tab.Screen
+        name="SellerDashboard"
+        component={SellerDashboard}
+        options={{
+          tabBarLabel: 'Seller',
+          tabBarIcon: ({ color }) => (
+            <Image
+              source={require('../../assets/tab/seller.png')}
+              style={[styles.icon, { tintColor: color }]}
+            />
+          ),
+        }}
+      />
 
       <Tab.Screen
         name="Profile"

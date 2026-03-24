@@ -10,6 +10,7 @@ import {
 } from 'react-native';
 
 import LinearGradient from 'react-native-linear-gradient';
+import { useNavigation } from '@react-navigation/native';
 
 import {
   useTheme,
@@ -31,12 +32,16 @@ import {
   Shield,
   FileText,
   ChevronRight,
+  Banknote,
+  Send
 } from 'lucide-react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import ScreenWrapper from "../../components/ScreenWrapper";
 
 const ProfileScreen = () => {
   const { colors, isDarkMode, toggleTheme } = useTheme();
 
+const navigation = useNavigation();
   const [switchAnim] = useState(new Animated.Value(isDarkMode ? 1 : 0));
 
   const toggleDarkMode = () => {
@@ -54,13 +59,21 @@ const ProfileScreen = () => {
     outputRange: [2, 22],
   });
 
-  const MenuItem = ({ icon: Icon, title, rightText, isSwitch }) => {
+  const MenuItem = ({ icon: Icon, title, rightText, isSwitch, screen }) => {
+    
+    const handlePress = () => {
+      if (isSwitch) return; // do nothing for switch
+      if (screen) {
+        navigation.navigate(screen);
+      }
+    };
     return (
       <TouchableOpacity
         style={[
           styles.menuRow,
           { borderBottomColor: colors.divider },
         ]}
+        onPress={handlePress}
       >
         <View
           style={[
@@ -119,7 +132,7 @@ const ProfileScreen = () => {
   };
 
   return (
-    <SafeAreaView style={{ flex: 1, backgroundColor: colors.background, paddingBottom: 60, }}>
+    <ScreenWrapper style={{ flex: 1, backgroundColor: colors.background, }}>
       {/* ✅ STATUS BAR */}
       <StatusBar
         translucent={false}
@@ -165,7 +178,9 @@ const ProfileScreen = () => {
             </View>
           </View>
 
-          <TouchableOpacity>
+          <TouchableOpacity
+            onPress={() => navigation.navigate('EditProfile')}
+          >
             <Text
               style={{
                 color: colors.primary,
@@ -270,26 +285,40 @@ const ProfileScreen = () => {
 
           <MenuItem
             icon={Star}
-            title="Rate Our App"
+            title="Add Property"
+            screen="AddPropertyScreen"
           />
 
           <MenuItem
             icon={HelpCircle}
             title="Help & Contact"
+            screen="HelpContactScreen"
+          />
+           <MenuItem
+            icon={Send}
+            title="Report An Issue"
+            screen="Feedback"
           />
 
           <MenuItem
             icon={Shield}
             title="Privacy Policy"
+            screen="PrivacyScreen"
           />
 
           <MenuItem
             icon={FileText}
             title="Terms & Conditions"
+            screen="TermScreen"
+          />
+          <MenuItem
+            icon={Banknote}
+            title="Refund Policy"
+            screen="RefundScreen"
           />
         </View>
       </ScrollView>
-    </SafeAreaView>
+    </ScreenWrapper>
   );
 };
 

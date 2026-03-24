@@ -10,7 +10,7 @@ import { RFValue } from 'react-native-responsive-fontsize';
 export const DarkColors = {
   primary: '#FF6B6B',
   primaryLight: '#FF8E8E',
-  primaryDark: '#FF4757',
+  primaryDark: '#d00f14',
 
   primaryGradientStart: '#FF6B6B',
   primaryGradientEnd: '#FFB86B',
@@ -42,7 +42,7 @@ export const DarkColors = {
 export const LightColors = {
   primary: '#FF6B6B',
   primaryLight: '#FF8E8E',
-  primaryDark: '#FF4757',
+  primaryDark: '#d00f14',
 
   primaryGradientStart: '#FF6B6B',
   primaryGradientEnd: '#FFB86B',
@@ -170,6 +170,7 @@ export const BorderRadius = {
   medium: 8,
   large: 12,
   xl: 16,
+  fty: 50,
   pill: 100,
 };
 

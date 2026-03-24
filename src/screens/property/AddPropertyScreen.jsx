@@ -8,308 +8,426 @@ import {
   Image,
 } from "react-native";
 
-import {
-  useTheme,
-  Spacing,
-  FontSizes,
-  Fonts,
-  BorderRadius,
-} from "../../theme/theme";
+import { launchImageLibrary } from "react-native-image-picker";
 
 import {
-  Home,
-  MapPin,
-  DollarSign,
-  BedDouble,
-  Bath,
+  Video,
+  X,
   ImagePlus,
+  MapPin,
+  Home,
+  DollarSign,
+  Bed,
+  Bath,
+  Sparkles,
+  ChevronRight,
 } from "lucide-react-native";
 
 import InputAuthField from "../../components/InputAuthField";
 import ButtonWithLoader from "../../components/ButtonWithLoader";
+import AppHeader from "../../components/AppHeader";
 
-import { launchImageLibrary } from "react-native-image-picker";
-import { Dropdown } from "react-native-element-dropdown";
+import {
+  useTheme,
+  FontSizes,
+  Spacing,
+  BorderRadius,
+  Fonts,
+  Shadows,
+} from "../../theme/theme";
 
-const AddPropertyScreen = () => {
+/* ================= STEPS CONFIG ================= */
+
+const steps = [
+  { label: "Home", icon: Home },
+  { label: "Amenities", icon: Sparkles },
+  { label: "Photos", icon: ImagePlus },
+  { label: "Video", icon: Video },
+];
+
+/* ================= COMPONENT ================= */
+
+export default function AddPropertyScreen() {
   const { colors } = useTheme();
 
+  const [currentStep, setCurrentStep] = useState(0);
+
   const [images, setImages] = useState([]);
+  const [video, setVideo] = useState(null);
+
   const [title, setTitle] = useState("");
   const [price, setPrice] = useState("");
   const [location, setLocation] = useState("");
+  const [size, setSize] = useState("");
   const [bedrooms, setBedrooms] = useState("");
   const [bathrooms, setBathrooms] = useState("");
-  const [propertyType, setPropertyType] = useState(null);
-  const [loading, setLoading] = useState(false);
+  const [description, setDescription] = useState("");
 
-  /* ---------------- Property Types ---------------- */
+  const [amenities, setAmenities] = useState([]);
 
-  const propertyTypes = [
-    { label: "House", value: "house" },
-    { label: "Villa", value: "villa" },
-    { label: "Apartment", value: "apartment" },
-    { label: "Office", value: "office" },
+  const amenitiesList = [
+    "Parking",
+    "WiFi",
+    "Swimming Pool",
+    "Gym",
+    "Garden",
+    "Security",
   ];
 
-  /* ---------------- Image Picker ---------------- */
+  /* ================= IMAGE PICK ================= */
 
-  const pickImages = async () => {
+  const pickImages = () => {
     launchImageLibrary(
-      {
-        mediaType: "photo",
-        selectionLimit: 5,
-      },
-      (response) => {
-        if (!response.didCancel && response.assets) {
-          setImages([...images, ...response.assets]);
+      { mediaType: "photo", selectionLimit: 5 },
+      (res) => {
+        if (res.assets) {
+          setImages([...images, ...res.assets]);
         }
       }
     );
   };
 
-  /* ---------------- Submit ---------------- */
+  const removeImage = (index) => {
+    setImages(images.filter((_, i) => i !== index));
+  };
+
+  /* ================= VIDEO PICK ================= */
+
+  const pickVideo = () => {
+    launchImageLibrary({ mediaType: "video" }, (res) => {
+      if (res.assets) setVideo(res.assets[0]);
+    });
+  };
+
+  /* ================= AMENITIES ================= */
+
+  const toggleAmenity = (item) => {
+    if (amenities.includes(item)) {
+      setAmenities(amenities.filter((a) => a !== item));
+    } else {
+      setAmenities([...amenities, item]);
+    }
+  };
+
+  /* ================= STEP CONTENT ================= */
+
+  const renderStepContent = () => {
+    switch (currentStep) {
+      case 0:
+        return (
+          <>
+            <InputAuthField
+              label="Property Title"
+              placeholder="Enter property title"
+              icon={<Home size={18} color={colors.textSecondary} />}
+              value={title}
+              onChangeText={setTitle}
+            />
+
+            <InputAuthField
+              label="Price"
+              placeholder="Enter price"
+              keyboardType="numeric"
+              icon={<DollarSign size={18} color={colors.textSecondary} />}
+              value={price}
+              onChangeText={setPrice}
+            />
+
+            <InputAuthField
+              label="Location"
+              placeholder="Enter location"
+              icon={<MapPin size={18} color={colors.textSecondary} />}
+              value={location}
+              onChangeText={setLocation}
+            />
+
+            <InputAuthField
+              label="Area Size (sqft)"
+              placeholder="Enter area"
+              keyboardType="numeric"
+              value={size}
+              onChangeText={setSize}
+            />
+
+            <InputAuthField
+              label="Bedrooms"
+              placeholder="Enter bedrooms"
+              keyboardType="numeric"
+              icon={<Bed size={18} color={colors.textSecondary} />}
+              value={bedrooms}
+              onChangeText={setBedrooms}
+            />
+
+            <InputAuthField
+              label="Bathrooms"
+              placeholder="Enter bathrooms"
+              keyboardType="numeric"
+              icon={<Bath size={18} color={colors.textSecondary} />}
+              value={bathrooms}
+              onChangeText={setBathrooms}
+            />
+
+            <InputAuthField
+              label="Description"
+              placeholder="Describe property"
+              value={description}
+              onChangeText={setDescription}
+            />
+          </>
+        );
+
+      case 1:
+        return (
+          <View style={styles.wrap}>
+            {amenitiesList.map((item, index) => {
+              const active = amenities.includes(item);
+
+              return (
+                <TouchableOpacity
+                  key={index}
+                  onPress={() => toggleAmenity(item)}
+                  style={[
+                    styles.amenity,
+                    {
+                      backgroundColor: active
+                        ? colors.primary
+                        : colors.surface,
+                    },
+                  ]}
+                >
+                  <Text
+                    style={{
+                      color: active ? "#fff" : colors.textSecondary,
+                      fontFamily: Fonts.quicksand.medium,
+                    }}
+                  >
+                    {item}
+                  </Text>
+                </TouchableOpacity>
+              );
+            })}
+          </View>
+        );
+
+      case 2:
+        return (
+          <>
+            <TouchableOpacity
+              style={[styles.uploadBox, { borderColor: colors.border }]}
+              onPress={pickImages}
+            >
+              <ImagePlus size={30} color={colors.textSecondary} />
+              <Text style={{ color: colors.textSecondary }}>
+                Upload Photos
+              </Text>
+            </TouchableOpacity>
+
+            <ScrollView horizontal showsHorizontalScrollIndicator={false}>
+              {images.map((img, index) => (
+                <View key={index} style={styles.imageWrap}>
+                  <Image source={{ uri: img.uri }} style={styles.image} />
+
+                  <TouchableOpacity
+                    style={styles.remove}
+                    onPress={() => removeImage(index)}
+                  >
+                    <X size={14} color="#fff" />
+                  </TouchableOpacity>
+                </View>
+              ))}
+            </ScrollView>
+          </>
+        );
+
+      case 3:
+        return (
+          <>
+            <TouchableOpacity
+              style={[styles.uploadBox, { borderColor: colors.border }]}
+              onPress={pickVideo}
+            >
+              <Video size={30} color={colors.textSecondary} />
+              <Text style={{ color: colors.textSecondary }}>
+                Upload Video
+              </Text>
+            </TouchableOpacity>
+
+            {video && (
+              <Text style={{ marginTop: 10 }}>
+                Selected: {video.fileName || "Video"}
+              </Text>
+            )}
+          </>
+        );
+    }
+  };
+
+  /* ================= NAVIGATION ================= */
+
+  const nextStep = () => {
+    if (currentStep < steps.length - 1) {
+      setCurrentStep(currentStep + 1);
+    }
+  };
+
+  const prevStep = () => {
+    if (currentStep > 0) {
+      setCurrentStep(currentStep - 1);
+    }
+  };
+
+  /* ================= SUBMIT ================= */
 
   const handleSubmit = () => {
-    if (!title || !price) {
-      alert("Please fill required fields");
-      return;
-    }
-
-    setLoading(true);
-
-    setTimeout(() => {
-      setLoading(false);
-      alert("Property Added Successfully");
-    }, 1500);
+    console.log("Final Submit");
   };
 
   return (
-    <View
-      style={[
-        styles.container,
-        { backgroundColor: colors.background },
-      ]}
-    >
-      <ScrollView showsVerticalScrollIndicator={false}>
+    <View style={[styles.container, { backgroundColor: colors.background }]}>
+      
+      {/* 🔥 STEP HEADER */}
+      <AppHeader title="Add Property" />
 
-        {/* HEADER */}
+      <View style={styles.stepHeader}>
+        {steps.map((step, index) => {
+          const Icon = step.icon;
 
-        <Text
-          style={[
-            styles.title,
-            { color: colors.textPrimary },
-          ]}
-        >
-          Add Property
-        </Text>
+          const isActive = index === currentStep;
+          const isCompleted = index < currentStep;
 
-        <Text
-          style={[
-            styles.subtitle,
-            { color: colors.textSecondary },
-          ]}
-        >
-          List your property easily
-        </Text>
+          return (
+            <View key={index} style={styles.stepRow}>
 
-        {/* IMAGE PICKER */}
+              <View
+                style={[
+                  styles.stepCircle,
+                  {
+                    backgroundColor:
+                      isActive || isCompleted
+                        ? colors.primary
+                        : colors.surface,
+                  },
+                ]}
+              >
+                <Icon
+                  size={16}
+                  color={
+                    isActive || isCompleted
+                      ? "#fff"
+                      : colors.textSecondary
+                  }
+                />
+              </View>
 
-        <TouchableOpacity
-          style={[
-            styles.imageUpload,
-            { backgroundColor: colors.surface },
-          ]}
-          onPress={pickImages}
-        >
-          <ImagePlus size={22} color={colors.primary} />
+              {index !== steps.length - 1 && (
+                <ChevronRight
+                  size={18}
+                  color={colors.textTertiary}
+                  style={{ marginHorizontal: 6 }}
+                />
+              )}
+            </View>
+          );
+        })}
+      </View>
 
-          <Text
-            style={{
-              marginLeft: 10,
-              color: colors.textPrimary,
-              fontFamily: Fonts.quicksand.bold,
-            }}
-          >
-            Upload Property Images
-          </Text>
-        </TouchableOpacity>
+      {/* CONTENT */}
 
-        {/* IMAGE PREVIEW */}
-
-        <ScrollView horizontal showsHorizontalScrollIndicator={false}>
-          {images.map((img, index) => (
-            <Image
-              key={index}
-              source={{ uri: img.uri }}
-              style={styles.previewImage}
-            />
-          ))}
-        </ScrollView>
-
-        {/* PROPERTY TITLE */}
-
-        <InputAuthField
-          label="Property Title"
-          placeholder="Enter property title"
-          icon={<Home size={18} color={colors.textSecondary} />}
-          value={title}
-          onChangeText={setTitle}
-          required
-        />
-
-        {/* PRICE */}
-
-        <InputAuthField
-          label="Price"
-          placeholder="Enter price"
-          icon={<DollarSign size={18} color={colors.textSecondary} />}
-          keyboardType="numeric"
-          value={price}
-          onChangeText={setPrice}
-          required
-        />
-
-        {/* LOCATION */}
-
-        <InputAuthField
-          label="Location"
-          placeholder="Enter location"
-          icon={<MapPin size={18} color={colors.textSecondary} />}
-          value={location}
-          onChangeText={setLocation}
-        />
-
-        {/* PROPERTY TYPE */}
-
-        <Text
-          style={[
-            styles.label,
-            { color: colors.textSecondary },
-          ]}
-        >
-          Property Type
-        </Text>
-
-        <Dropdown
-          style={[
-            styles.dropdown,
-            { backgroundColor: colors.cardBackground },
-          ]}
-          data={propertyTypes}
-          labelField="label"
-          valueField="value"
-          placeholder="Select property type"
-          value={propertyType}
-          onChange={(item) => setPropertyType(item.value)}
-          activeColor={colors.cardBackground}
-           containerStyle={{
-          backgroundColor: colors.surface,
-          borderRadius: BorderRadius.large,
-          borderColor: colors.divider,
-          borderWidth: 1,
-        }}
-          itemContainerStyle={{ backgroundColor: colors.surface }}
-          placeholderStyle={{
-          fontFamily: Fonts.quicksand.bold,
-          fontSize: FontSizes.small,
-          color: colors.textTertiary,
-        }}
-        selectedTextStyle={{
-          fontFamily: Fonts.quicksand.bold,
-          fontSize: FontSizes.small,
-          color: colors.textPrimary,
-        }}
-        itemTextStyle={{
-          fontFamily: Fonts.quicksand.bold,
-          fontSize: FontSizes.small,
-          color: colors.textPrimary,
-        }}
-        />
-
-        {/* BEDROOMS */}
-
-        <InputAuthField
-          label="Bedrooms"
-          placeholder="Number of bedrooms"
-          icon={<BedDouble size={18} color={colors.textSecondary} />}
-          keyboardType="numeric"
-          value={bedrooms}
-          onChangeText={setBedrooms}
-        />
-
-        {/* BATHROOMS */}
-
-        <InputAuthField
-          label="Bathrooms"
-          placeholder="Number of bathrooms"
-          icon={<Bath size={18} color={colors.textSecondary} />}
-          keyboardType="numeric"
-          value={bathrooms}
-          onChangeText={setBathrooms}
-        />
-
-        {/* SUBMIT BUTTON */}
-
-        <View style={{ marginTop: Spacing.lg }}>
-          <ButtonWithLoader
-            text="Submit Property"
-            isLoading={loading}
-            onPress={handleSubmit}
-          />
-        </View>
-
-        <View style={{ height: 60 }} />
+      <ScrollView contentContainerStyle={styles.content}>
+        {renderStepContent()}
       </ScrollView>
+
+      {/* FOOTER */}
+
+      <View style={styles.footer}>
+        {currentStep > 0 && (
+          <TouchableOpacity onPress={prevStep}>
+            <Text style={{ color: colors.textSecondary }}>Back</Text>
+          </TouchableOpacity>
+        )}
+
+        {currentStep < steps.length - 1 ? (
+          <ButtonWithLoader text="Next" onPress={nextStep} />
+        ) : (
+          <ButtonWithLoader text="Submit" onPress={handleSubmit} />
+        )}
+      </View>
     </View>
   );
-};
+}
 
-export default AddPropertyScreen;
+/* ================= STYLES ================= */
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    padding: Spacing.md,
-  },
+  container: { flex: 1 },
 
-  title: {
-    fontSize: FontSizes.xlarge,
-    fontFamily: Fonts.quicksand.bold,
-  },
-
-  subtitle: {
-    fontSize: FontSizes.small,
-    fontFamily: Fonts.quicksand.medium,
-    marginBottom: Spacing.lg,
-  },
-
-  imageUpload: {
+  stepHeader: {
     flexDirection: "row",
     alignItems: "center",
+    justifyContent: "center",
     padding: Spacing.md,
-    borderRadius: BorderRadius.large,
-    marginBottom: Spacing.md,
   },
 
-  previewImage: {
-    width: 80,
-    height: 80,
-    borderRadius: BorderRadius.medium,
+  stepRow: {
+    flexDirection: "row",
+    alignItems: "center",
+  },
+
+  stepCircle: {
+    width: 36,
+    height: 36,
+    borderRadius: 18,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+
+  content: {
+    padding: Spacing.md,
+  },
+
+  wrap: {
+    flexDirection: "row",
+    flexWrap: "wrap",
+  },
+
+  amenity: {
+    padding: 10,
+    borderRadius: 20,
+    margin: 5,
+  },
+
+  uploadBox: {
+    height: 140,
+    borderWidth: 1,
+    borderRadius: BorderRadius.large,
+    justifyContent: "center",
+    alignItems: "center",
+    marginBottom: 10,
+  },
+
+  imageWrap: {
+    position: "relative",
     marginRight: 10,
-    marginBottom: Spacing.md,
   },
 
-  dropdown: {
-    height: 50,
-    borderRadius: BorderRadius.large,
-    paddingHorizontal: Spacing.md,
-    marginBottom: Spacing.md,
+  image: {
+    width: 120,
+    height: 90,
+    borderRadius: 10,
   },
 
-  label: {
-    fontFamily: Fonts.quicksand.bold,
-    fontSize: FontSizes.small,
-    marginBottom: 5,
+  remove: {
+    position: "absolute",
+    top: 5,
+    right: 5,
+    backgroundColor: "red",
+    borderRadius: 10,
+    padding: 3,
+  },
+
+  footer: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    padding: Spacing.md,
   },
 });

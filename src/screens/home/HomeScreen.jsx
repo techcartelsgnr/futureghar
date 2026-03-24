@@ -7,13 +7,13 @@ import PropertyList from '../property/PropertyList'
 import {
   useTheme,
 } from '../../theme/theme';
-import { SafeAreaView } from 'react-native-safe-area-context'
+import ScreenWrapper from "../../components/ScreenWrapper";
 
 
 export default function HomeScreen() {
   const { colors, isDarkMode, toggleTheme } = useTheme();
   return (
-    <SafeAreaView style={{ flex: 1, backgroundColor: colors.background, paddingBottom: 60, }}>
+    <ScreenWrapper style={{ flex: 1, backgroundColor: colors.background, }}>
       {/* ✅ STATUS BAR */}
       <StatusBar
         translucent={false}
@@ -23,7 +23,7 @@ export default function HomeScreen() {
       <Header />
       <PropertySlider />
       <PropertyList />
-    </SafeAreaView>
+    </ScreenWrapper>
   )
 }
 

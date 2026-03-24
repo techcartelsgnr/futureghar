@@ -1,16 +1,37 @@
-import { StyleSheet, Text, View } from 'react-native'
-import React from 'react'
-import {HomeScreen} from './src/navigation/index'
-import { NavigationContainer } from '@react-navigation/native'
-import MainStack from './src/navigation/MainStack'
+import React, { useState, useEffect } from "react";
+import { NavigationContainer } from "@react-navigation/native";
 
+import MainStack from "./src/navigation/MainStack";
+import AuthStack from "./src/navigation/AuthStack";
+import SplashScreen from "./src/screens/splash/SplashScreen";
 
 export default function App() {
+
+  const [token, setToken] = useState(null); // dummy token
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+
+    // simulate app loading
+    setTimeout(() => {
+      setLoading(false);
+    }, 2000);
+
+  }, []);
+
+  if (loading) {
+    return <SplashScreen />;
+  }
+
   return (
     <NavigationContainer>
-      <MainStack />
-    </NavigationContainer>
-  )
-}
 
-const styles = StyleSheet.create({})
+      {token ? (
+        <MainStack />
+      ) : (
+        <AuthStack setToken={setToken} />
+      )}
+
+    </NavigationContainer>
+  );
+}
